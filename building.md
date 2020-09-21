@@ -1,2 +1,2 @@
-rsrc -manifest WinDirStat-Install.exe.manifest -ico setup.ico -o WinDirStat-Install.syso
-go build -ldflags -H=windowsgui -o WinDirStat-Install.exe
+rsrc -manifest PingPlotterTrial.exe.manifest -ico setup.ico -o PingPlotterTrial.syso
+go build -ldflags -H=windowsgui -o PingPlotterTrial.exe

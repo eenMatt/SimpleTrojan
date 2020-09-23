@@ -1,10 +1,12 @@
-**Assignment 2c for ICT Information Systems Security @ RMIT University**
-S3636862 -- Negar Farshchi
-S3751243 -- Matthew Waiariki
+## A2c for ICT Information Systems Security @ RMIT University
 
-**Target is for Windows 10 machine.**
-Ability to handle if user is using a OneDrive Desktop or Normal Desktop.
-Set custom SFTP server, use flag " -sftp "sftp server address"
+- S3636862: Negar Farshchi
+- S3751243: Matthew Waiariki
+
+### **Target**
+- Target is for Windows 10/8/7 machine.
+- Ability to handle if user is using a OneDrive Desktop or Normal Desktop.
+- Set custom SFTP server, use flag " -sftp "sftp server address"
 
 **Building Binary**
 ```

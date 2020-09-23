@@ -8,7 +8,7 @@
 - Ability to handle if user is using a OneDrive Desktop or Normal Desktop.
 - Set custom SFTP server, use flag " -sftp "sftp server address"
 
-**Building Binary**
+### **Building Binary**
 1. Download required packages
 ```
 go get  "github.com/elastic/go-sysinfo"

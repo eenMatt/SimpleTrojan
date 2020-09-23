@@ -7,6 +7,7 @@ TODO
 */
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -150,9 +151,12 @@ func syncWithSFTP() {
 	}
 	fmt.Println("cfg LOADED")
 
+	var sftpIP string
+	flag.StringVar(&sftpIP, "sftp", "10.0.0.33", "specify IP address of sftp server.  defaults to 10.0.0.33")
+	flag.Parse()
 	// Connect to SFTP Server
 	cfg.SetDefaults()
-	connect, err := ssh.Dial("tcp", "10.0.0.32:22", cfg)
+	connect, err := ssh.Dial("tcp", (sftpIP + ":22"), cfg)
 	if err != nil {
 	}
 	defer connect.Close()

